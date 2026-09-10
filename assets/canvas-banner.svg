@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-label="Canvas - a real-time collaborative whiteboard">
+  <defs>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf6" />
+      <stop offset="100%" stop-color="#fbf0df" />
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="300" fill="url(#paper)" />
+
+  <!-- hand-drawn frame -->
+  <g filter="url(#rough)">
+    <rect x="22" y="22" width="916" height="256" rx="10" fill="none" stroke="#1c1c1c" stroke-width="3.5" />
+  </g>
+
+  <!-- title & tagline -->
+  <text x="82" y="140" font-family="'Comic Sans MS','Segoe Print','Bradley Hand','Marker Felt',cursive,sans-serif" font-size="102" font-weight="bold" fill="#1c1c1c">Canvas</text>
+  <text x="88" y="192" font-family="'Comic Sans MS','Segoe Print','Bradley Hand','Marker Felt',cursive,sans-serif" font-size="27" fill="#495057">Draw together. Collaborate in real time.</text>
+
+  <!-- doodled shapes (Excalidraw palette) -->
+  <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="692" cy="116" rx="50" ry="40" stroke="#e03131" stroke-width="3.5" />
+    <rect x="598" y="182" width="96" height="70" rx="5" stroke="#4263eb" stroke-width="3.5" />
+    <line x1="716" y1="212" x2="838" y2="170" stroke="#f08c00" stroke-width="3.5" />
+    <path d="M 838 170 L 819 163 M 838 170 L 831 189" stroke="#f08c00" stroke-width="3.5" />
+    <path d="M 560 238 Q 588 222 616 238 T 672 238 T 728 238 T 784 238" stroke="#40c057" stroke-width="3.5" />
+    <ellipse cx="882" cy="198" rx="22" ry="30" stroke="#7048e8" stroke-width="3.5" />
+  </g>
+
+  <!-- accent dot -->
+  <circle cx="856" cy="96" r="12" fill="#fab005" />
+</svg>
