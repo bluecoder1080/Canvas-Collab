@@ -138,8 +138,8 @@ importers:
         specifier: 26.4.1
         version: 26.4.1
       '@types/ws':
-        specifier: ^8.5.13
-        version: 8.18.2
+        specifier: 8.5.13
+        version: 8.5.13
       eslint:
         specifier: 10.9.1
         version: 10.9.1
@@ -1019,8 +1019,8 @@ packages:
   '@types/serve-static@1.15.10':
     resolution: {integrity: sha512-tRs1dB+g8Itk72rlSI2ZrW6vZg0YrLI81iQSTkMmOqnqCaNr/8Ek4VwWcN5vZgCYWbg/JJSGBlUaYGAOP73qBw==}
 
-  '@types/ws@8.18.2':
-    resolution: {integrity: sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w==}
+  '@types/ws@8.5.13':
+    resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
 
   '@typescript/typescript-aix-ppc64@7.0.2':
     resolution: {integrity: sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==}
@@ -2717,7 +2717,7 @@ snapshots:
       '@types/node': 26.4.1
       '@types/send': 0.17.6
 
-  '@types/ws@8.18.2':
+  '@types/ws@8.5.13':
     dependencies:
       '@types/node': 26.4.1
 

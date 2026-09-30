@@ -20,7 +20,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "26.4.1",
-    "@types/ws": "^8.5.13",
+    "@types/ws": "8.5.13",
     "eslint": "10.9.1",
     "tsx": "^4.19.2",
     "typescript": "7.0.2"
