@@ -2,12 +2,7 @@
  * Auth controller: signup / signin.
  * Flow: validate (zod) -> check DB -> bcrypt -> sign JWT -> respond.
  */
-import {
-  createUser,
-  findUserByEmail,
-  signinSchema,
-  signupSchema,
-} from "@repo/shared";
+import { signinSchema, signupSchema } from "@repo/shared";
 import { createUser as dbCreateUser, findUserByEmail as dbFindByEmail } from "@repo/db";
 import type { Response } from "express";
 import { HttpError } from "../middleware/errorHandler.js";
@@ -15,10 +10,6 @@ import type { AuthRequest } from "../middleware/auth.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { signToken } from "../utils/jwt.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
-
-// Re-exported so routes stay one-liners. (Validators live in @repo/shared.)
-void createUser;
-void findUserByEmail;
 
 function publicUser(row: { id: string; name: string; email: string }) {
   return { id: row.id, name: row.name, email: row.email };
