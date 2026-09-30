@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Our workspace packages ship raw TS -> compiled JS; let Next compile them.
-  transpilePackages: ["@repo/shared", "@repo/ui"],
+  // Our workspace packages ship compiled JS; let Next compile TS sources.
+  transpilePackages: ["@repo/shared"],
 };
 
 export default nextConfig;
