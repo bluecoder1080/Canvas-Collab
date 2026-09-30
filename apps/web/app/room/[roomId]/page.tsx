@@ -28,11 +28,16 @@ export default function RoomPage({
   const [username, setUsername] = useState<string | null>(null);
   const [color, setColor] = useState(AVATAR_COLORS[0]!);
   const [nameInput, setNameInput] = useState("");
+  // Placeholder suggestion. Generated in useEffect (client-only) so the
+  // server render and the first client render match — calling randomName()
+  // during render would cause a hydration mismatch.
+  const [namePlaceholder, setNamePlaceholder] = useState("Your display name");
   const [roomName, setRoomName] = useState("Loading…");
   const [notFound, setNotFound] = useState(false);
 
   // Restore identity across refreshes (per room).
   useEffect(() => {
+    setNamePlaceholder(randomName());
     const saved = sessionStorage.getItem(`canvas:${roomId}:name`);
     const savedColor = sessionStorage.getItem(`canvas:${roomId}:color`);
     if (saved) {
