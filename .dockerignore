@@ -1,0 +1,11 @@
+# Never bake these into images: installed fresh / injected at runtime.
+node_modules
+dist
+.next
+.turbo
+.git
+# Local secrets — platforms inject env vars instead (see HOW_TO_RUN §10).
+.env
+.env.local
+.env.*.local
+*.pem
