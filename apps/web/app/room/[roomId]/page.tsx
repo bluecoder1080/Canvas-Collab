@@ -75,7 +75,7 @@ export default function RoomPage({
             {notFound ? "Board not found." : `Room: ${roomId}`}
           </p>
           <input
-            placeholder={randomName()}
+            placeholder={namePlaceholder}
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
             maxLength={30}
