@@ -184,7 +184,15 @@ export function Whiteboard({ roomId, username, color, roomName }: Props) {
 
     // Pan mode: hand tool OR space held OR middle-drag intent.
     if (tool === "hand" || spaceHeld.current || e.button === 1) {
-      dragRef.current = { mode: "pan", startWX: wx, startWY: wy, panCam: { ...cam } };
+      const rect = canvasRef.current!.getBoundingClientRect();
+      dragRef.current = {
+        mode: "pan",
+        startWX: wx,
+        startWY: wy,
+        startSX: e.clientX - rect.left,
+        startSY: e.clientY - rect.top,
+        panCam: { ...cam },
+      };
       return;
     }
 
@@ -193,7 +201,15 @@ export function Whiteboard({ roomId, username, color, roomName }: Props) {
       const hit = [...shapesRef.current].reverse().find((s) => hitTest(s, wx, wy));
       if (hit) {
         setSelectedId(hit.id);
-        dragRef.current = { mode: "move", startWX: wx, startWY: wy, origShape: { ...hit } };
+        const rect = canvasRef.current!.getBoundingClientRect();
+        dragRef.current = {
+          mode: "move",
+          startWX: wx,
+          startWY: wy,
+          startSX: e.clientX - rect.left,
+          startSY: e.clientY - rect.top,
+          origShape: { ...hit },
+        };
       } else {
         setSelectedId(null);
       }
@@ -259,7 +275,13 @@ export function Whiteboard({ roomId, username, color, roomName }: Props) {
         createdBy: username,
       };
     }
-    dragRef.current = { mode: "create", startWX: wx, startWY: wy };
+    dragRef.current = {
+      mode: "create",
+      startWX: wx,
+      startWY: wy,
+      startSX: 0,
+      startSY: 0,
+    };
     repaint();
   };
 
@@ -271,12 +293,15 @@ export function Whiteboard({ roomId, username, color, roomName }: Props) {
     if (!drag) return;
 
     if (drag.mode === "pan" && drag.panCam) {
-      // Keep the grabbed world point under the cursor: shift the camera
-      // by the world-space delta since the grab started.
+      // Pan in SCREEN space (stable regardless of camera): shift the camera
+      // by the pixel delta since grab, converted with the grab-time zoom.
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
       setCamera({
         ...drag.panCam,
-        x: drag.panCam.x - (wx - drag.startWX),
-        y: drag.panCam.y - (wy - drag.startWY),
+        x: drag.panCam.x - (sx - drag.startSX) / drag.panCam.zoom,
+        y: drag.panCam.y - (sy - drag.startSY) / drag.panCam.zoom,
       });
       return;
     }

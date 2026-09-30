@@ -27,7 +27,7 @@ pool.on("error", (err) => {
 });
 
 /** Thin helper so callers don't import Pool everywhere. */
-export async function query<T = Record<string, unknown>>(
+export async function query<T extends import("pg").QueryResultRow = import("pg").QueryResultRow>(
   text: string,
   params?: unknown[],
 ) {
