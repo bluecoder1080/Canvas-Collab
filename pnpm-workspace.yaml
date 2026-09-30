@@ -1,3 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# esbuild installs its platform-specific binary during dependency installation.
+allowBuilds:
+  esbuild@0.28.2: true

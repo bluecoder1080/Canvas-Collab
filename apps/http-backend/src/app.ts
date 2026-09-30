@@ -37,3 +37,6 @@ app.use("/api/rooms", optionalAuth, roomRoutes);
 // --- 404 + errors (must be last) ---
 app.use((_req, res) => res.status(404).json({ error: "Not found" }));
 app.use(errorHandler);
+
+// Vercel imports this entrypoint; local development calls listen() in index.ts.
+export default app;
