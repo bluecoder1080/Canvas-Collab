@@ -18,7 +18,7 @@ import {
   type ServerMessage,
   type Shape,
 } from "@repo/shared";
-import { config } from "../../lib/config";
+import { config } from "../lib/config";
 
 export interface RemoteCursor {
   x: number;
