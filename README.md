@@ -12,126 +12,99 @@
   <img src="https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" />
   <img src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/Express-4-000000?style=flat-square&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/Postgres-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="Postgres" />
   <img src="https://img.shields.io/badge/WebSocket-realtime-101010?style=flat-square" alt="WebSocket" />
-  <img src="https://img.shields.io/github/license/bluecoder1080/Canvas-Collab?style=flat-square" alt="License" />
-  <img src="https://img.shields.io/github/stars/bluecoder1080/Canvas-Collab?style=flat-square" alt="GitHub stars" />
 </p>
 
 ---
 
+## 🚀 Run it
+
+**Full step-by-step guide (install → Postgres → migrate → dev): [`HOW_TO_RUN.md`](HOW_TO_RUN.md)**
+
+Quick version (Postgres running, `.env` files copied — see the guide):
+
+```sh
+pnpm install
+pnpm --filter @repo/db migrate   # create users / rooms / shapes tables
+pnpm dev                         # web :3000 · http :3001 · ws :8080
+```
+
+Then open http://localhost:3000, create a board, and share the link —
+a second browser tab draws live with you.
+
 ## ✨ Highlights
 
-- 🖌️ **Draw & sketch** on an infinite canvas — an Excalidraw-inspired whiteboard experience
-- 👥 **Real-time collaboration** via a dedicated WebSocket backend
-- 🌐 **REST API** powered by Express for rooms, shapes & persistence
-- ⚛️ **Modern frontend** built with Next.js 16 and React 19
-- 🧩 **Shared packages** (`@repo/ui`, lint & TS configs) reused across every app
-- 📦 **100% TypeScript** monorepo orchestrated by Turborepo + pnpm
+- 🖌️ **7 drawing tools** on an infinite canvas (rect, ellipse, diamond, line, arrow, pencil, text) + select/move, eraser, pan & zoom
+- 👥 **Real-time collaboration** — optimistic shape sync, live cursors with name flags, presence roster
+- 💾 **Postgres persistence** — every shape is a row (`packages/db/schema.sql`); write-through over WS + HTTP autosave backup
+- 🔗 **Share-by-link rooms** — short ids (`/room/aB3xK9mQ2Z`), no login required; optional JWT auth included
+- 🧩 **Shared packages** (`@repo/shared` types+zod protocol, `@repo/db` SQL layer) reused by every app
+- 📖 **Written for studying** — every file has a header comment explaining what it does and why
 
 ## 🗂️ What's inside?
 
-This monorepo includes the following apps and packages:
-
 ### 📱 Apps
 
-- 🖥️ **`web`** — a [Next.js](https://nextjs.org/) frontend (React 19, Next.js 16) served on **port 3000**
-- ⚙️ **`http-backend`** — an [Express](https://expressjs.com/) HTTP API server written in TypeScript
-- 🔌 **`ws-backend`** — a WebSocket backend for real-time collaboration (Canvas-Collab)
-
-> [!NOTE]
-> Both `web` and `http-backend` currently default to **port 3000**. If you run them together, change the port of one of them (e.g. set `PORT` for `http-backend`).
+- 🖥️ **`web`** — [Next.js](https://nextjs.org/) frontend (React 19) on **port 3000**
+  - `app/page.tsx` — landing (create / join board)
+  - `app/room/[roomId]/page.tsx` — name gate → whiteboard
+  - `components/canvas/Whiteboard.tsx` — the canvas engine (pan/zoom, drafts, selection)
+  - `hooks/useCollabRoom.ts` — the **only** file that touches WebSocket
+  - `lib/canvas/draw.ts` + `geometry.ts` — rendering + camera math
+- ⚙️ **`http-backend`** — [Express](https://expressjs.com/) REST API on **port 3001**
+  - `POST /api/rooms`, `GET /api/rooms/:id`, `GET|PUT|DELETE /api/rooms/:id/shapes`
+  - `POST /api/auth/signup|signin` (optional JWT — guests can draw without it)
+- 🔌 **`ws-backend`** — realtime server (`ws` lib) on **port 8080**
+  - `rooms/RoomManager.ts` — in-memory room cache + broadcast + DB write-through
 
 ### 📦 Packages
 
-- 🎛️ **`@repo/ui`** — a shared React component library used by the web app
-- 📐 **`@repo/eslint-config`** — shared ESLint configurations
-- 🏗️ **`@repo/typescript-config`** — shared `tsconfig.json` files used throughout the monorepo
+- 🔷 **`@repo/shared`** — `Shape` types, WS message protocol, zod validators, constants
+- 🐘 **`@repo/db`** — `pg` Pool singleton, room/shape/user queries, `schema.sql` + `migrate`
+- 🎛️ **`@repo/ui`** — shared React component library (template default)
+- 📐 **`@repo/eslint-config`** / 🏗️ **`@repo/typescript-config`** — shared configs
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### 🧰 Utilities
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Turbo](https://turborepo.dev) for task orchestration & caching
+Each app/package is 100% [TypeScript](https://www.typescriptlang.org/).
 
 ## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
     subgraph Apps["Apps"]
-        Web["web · Next.js 16 / React 19<br/>port 3000"]
-        Http["http-backend · Express 5<br/>port 3000"]
-        Ws["ws-backend · WebSocket<br/>real-time collab"]
+        Web["web · Next.js<br/>:3000"]
+        Http["http-backend · Express<br/>:3001"]
+        Ws["ws-backend · ws<br/>:8080"]
     end
 
-    subgraph Packages["Packages"]
-        Ui["@repo/ui"]
-        Lint["@repo/eslint-config"]
-        Ts["@repo/typescript-config"]
-    end
+    DB[("Postgres<br/>users · rooms · shapes")]
 
-    Web --> Ui
-    Web -. "REST / HTTP" .-> Http
-    Web -. "WebSocket" .-> Ws
+    Web -- "REST: rooms, shapes, auth" --> Http
+    Web -- "WS: join, shape:*, cursor" --> Ws
+    Http --> DB
+    Ws --> DB
 ```
+
+Study order: `packages/shared` → `packages/db/schema.sql` → `http-backend`
+→ `ws-backend/rooms/RoomManager.ts` → `web/hooks/useCollabRoom.ts` →
+`web/components/canvas/Whiteboard.tsx`.
 
 ## 📋 Requirements
 
-- Node.js `>=24` (see `engines` in `package.json`)
-- pnpm `11.25.0` (see `packageManager`)
+- Node.js `>=20` (24 recommended)
+- pnpm `9` or `11`
+- Postgres `14+` (local install or `docker compose up -d`)
 
-## 🚀 Getting Started
-
-Install dependencies from the repo root:
-
-```sh
-pnpm install
-```
-
-### 🧑‍💻 Develop
-
-Run all apps and packages in development mode:
+## 🧰 Commands
 
 ```sh
-pnpm dev
-```
-
-Or run a specific app using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-```sh
-pnpm dev --filter=web
-pnpm dev --filter=http-backend
-```
-
-### 🧱 Build
-
-Build all apps and packages:
-
-```sh
-pnpm build
-```
-
-Build a specific app or package:
-
-```sh
-pnpm build --filter=web
-pnpm build --filter=http-backend
-```
-
-### 🔍 Lint & Type Check
-
-```sh
-pnpm lint
-pnpm check-types
-```
-
-### ✏️ Format
-
-```sh
-pnpm format
+pnpm dev            # all apps in dev mode (turbo)
+pnpm build          # build everything
+pnpm lint           # eslint everywhere
+pnpm check-types    # tsc --noEmit everywhere
+pnpm format         # prettier
+pnpm db:migrate     # apply packages/db/schema.sql
 ```
 
 ## 💾 Remote Caching
@@ -142,17 +115,6 @@ Turborepo can use [Remote Caching](https://turborepo.dev/docs/core-concepts/remo
 pnpm exec turbo login
 pnpm exec turbo link
 ```
-
-## 🔗 Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
 
 ---
 
