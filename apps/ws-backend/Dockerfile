@@ -41,7 +41,7 @@ COPY apps/ws-backend apps/ws-backend
 RUN pnpm --filter @repo/shared build \
  && pnpm --filter @repo/db build \
  && pnpm --filter ws-backend build \
- && pnpm --filter ws-backend deploy /deploy
+ && pnpm --filter ws-backend --prod deploy /deploy
 
 FROM node:22-alpine AS runner
 ENV NODE_ENV=production

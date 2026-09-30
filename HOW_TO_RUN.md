@@ -230,6 +230,29 @@ Steps:
 4. **Deploy.** Test with `vercel dev` locally first — it runs both services
    with the same routing table.
 
+### ws-backend (Render / Fly.io / Railway)
+
+The realtime server can't run on Vercel, so ship it as a container from
+`apps/ws-backend/Dockerfile` (build context = repo root):
+
+```sh
+# sanity check locally (needs Docker Desktop / engine)
+docker build -f apps/ws-backend/Dockerfile -t canvas-ws .
+docker run -p 8080:8080 -e DATABASE_URL="postgres://…" canvas-ws
+```
+
+- **Render:** New → Web Service → Docker, Dockerfile path
+  `apps/ws-backend/Dockerfile`. Set `DATABASE_URL`; the port comes from
+  Render's injected `$PORT` automatically.
+- **Fly.io:** `fly launch --dockerfile apps/ws-backend/Dockerfile`, then
+  `fly secrets set DATABASE_URL=…`.
+- **Railway:** New Service → GitHub repo, set the Dockerfile path and add
+  `DATABASE_URL` (or attach Railway Postgres and reuse its variable).
+
+Then set the Vercel project's `NEXT_PUBLIC_WS_URL` to
+`wss://<your-ws-host>` and redeploy `web`. Open two boards and draw —
+shapes and cursors should sync live.
+
 ---
 
 ## 11. Troubleshooting
