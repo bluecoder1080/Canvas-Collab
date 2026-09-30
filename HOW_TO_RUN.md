@@ -78,7 +78,7 @@ Copy-Item apps\web\.env.example apps\web\.env.local
 |------|----------|----------|
 | `apps/http-backend/.env` | `PORT`, `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN` | `3001` |
 | `apps/ws-backend/.env` | `WS_PORT`, `DATABASE_URL` | `8080` |
-| `apps/web/.env.local` | `NEXT_PUBLIC_HTTP_URL`, `NEXT_PUBLIC_WS_URL` | `http://localhost:3001`, `ws://localhost:8080` |
+| `apps/web/.env.local` | `NEXT_PUBLIC_WS_URL` (+ optional `NEXT_PUBLIC_HTTP_URL`) | same-origin `/api/*` (proxied to `:3001` in dev), `ws://localhost:8080` |
 
 > `NEXT_PUBLIC_*` vars are baked into the browser bundle — restart `pnpm dev`
 > after changing them.
@@ -181,7 +181,7 @@ Canvas-Collab/
 │   └── lib/canvas/geometry.ts # camera (pan/zoom) math
 │   └── lib/api.ts             # REST client (rooms, autosave)
 ├── apps/http-backend/         # Express REST API (port 3001)
-│   └── src/{index,config,routes,controllers,middleware,utils}.ts
+│   └── src/{index (listen), app (exported app), config, routes, controllers, middleware, utils}
 ├── apps/ws-backend/           # realtime server (port 8080)
 │   └── src/{index.ts, rooms/RoomManager.ts}
 ├── packages/shared/           # types + zod + WS protocol (web+servers)
@@ -196,7 +196,43 @@ Canvas-Collab/
 
 ---
 
-## 10. Troubleshooting
+## 10. Deploying to Vercel (services)
+
+`vercel.json` deploys **two** services in one project: `web` (Next.js, catch-all
+`/(.*)`) and `http-backend` (Express, `/api/(.*)` — the service sees the
+original path, e.g. `/api/rooms`, which matches the Express mounts exactly).
+There are **no bindings**: every service-to-service call in this app originates
+in the *browser* (REST fetches, WebSocket), and bindings only work in
+server-side functions — so the backends must be publicly reachable.
+
+`ws-backend` is **not** on Vercel: it's a long-lived `ws` TCP server and can't
+run as a request/response Function. Host it on Render / Fly.io / Railway and
+point the frontend at it (see env table).
+
+Steps:
+
+1. **Provision Postgres** (Neon, Supabase, or Vercel Postgres). Then create the
+   tables against it from your machine:
+   ```sh
+   DATABASE_URL="postgres://…" pnpm db:migrate
+   ```
+2. **Import the repo** in Vercel (it auto-detects `vercel.json` services).
+3. **Set project environment variables** (shared by both services):
+   | Variable | Value | Used by |
+   |----------|-------|---------|
+   | `DATABASE_URL` | your pooled Postgres URL | http-backend |
+   | `JWT_SECRET` | long random string | http-backend |
+   | `CORS_ORIGIN` | `https://<your-domain>` | http-backend |
+   | `NEXT_PUBLIC_WS_URL` | `wss://<ws-backend-host>` | web (baked at build time) |
+   `NEXT_PUBLIC_HTTP_URL` is **not needed** — the frontend calls same-origin
+   `/api/*`, which Vercel rewrites to the http-backend service on every
+   deployment, including previews.
+4. **Deploy.** Test with `vercel dev` locally first — it runs both services
+   with the same routing table.
+
+---
+
+## 11. Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
