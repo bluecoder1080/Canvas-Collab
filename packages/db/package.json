@@ -12,6 +12,7 @@
     "migrate": "node dist/migrate.js"
   },
   "dependencies": {
+    "@repo/shared": "workspace:*",
     "dotenv": "^16.4.5",
     "pg": "^8.13.1"
   },

@@ -8,7 +8,7 @@ import {
   saveShapesHandler,
 } from "../controllers/room.controller.js";
 
-export const roomRoutes = Router();
+export const roomRoutes: Router = Router();
 roomRoutes.post("/", createRoomHandler);
 roomRoutes.get("/:roomId", getRoomHandler);
 roomRoutes.get("/:roomId/shapes", listShapesHandler);
